@@ -1,5 +1,19 @@
 version: "3.9"
 services:
+  db:
+    image: postgres:14.1-alpine
+    container_name: "task-database"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - tasknetwork
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+
   app:
     build:
       dockerfile: Dockerfile
@@ -8,4 +22,18 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8080:8080"
+      - 8080:8080
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - tasknetwork
+
+volumes:
+  database_postgres:
+
+networks:
+  tasknetwork:
+    driver: bridge
+    

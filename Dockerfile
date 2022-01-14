@@ -3,7 +3,9 @@ FROM golang:1.17 as base
 FROM base as dev
 
 RUN mkdir /app
+
 ADD . /app
+
 WORKDIR /app
 ## Add this go mod download command to pull in any dependencies
 RUN go mod download
