@@ -1,39 +1,38 @@
-version: "3.9"
+version: "3.8"
+
 services:
   db:
-    image: postgres:14.1-alpine
+    image: postgres:12.2-alpine
     container_name: "task-database"
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB="${DB_DB}"
+      - POSTGRES_USER="${DB_USERNAME}"
+      - POSTGRES_PASSWORD="${DB_PASSWORD}"
     networks:
-      - tasknetwork
+      - fullstack
     volumes:
       - database_postgres:/var/lib/postgresql/data
-
-  app:
-    build:
-      dockerfile: Dockerfile
-      context: .
-      target: dev
-    volumes:
-      - .:/app
-    ports:
-      - 8080:8080
+  
+  api:
+    build: .
+    container_name: "task-manager-api"
     env_file:
       - .env
+    ports:
+      - "8080:8080"
     depends_on:
       - db
+    volumes:
+      - .:/app
     networks:
-      - tasknetwork
+      - fullstack
+  
 
 volumes:
   database_postgres:
 
 networks:
-  tasknetwork:
+  fullstack:
     driver: bridge
-    
